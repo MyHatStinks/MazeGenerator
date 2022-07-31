@@ -37,7 +37,9 @@ namespace MazeGenerator
             var rand = new Random();
 
             // Carve inner walls
-            CarveFromCell(rand.Next(1, Width - 1), rand.Next(1, Height - 1));
+            CarveFromCell(
+                rand.Next(0, (Width - 1) / 2) * 2 + 1,
+                rand.Next(0, (Height - 1) / 2) * 2 + 1);
 
             //// Start position somewhere along the top
             var start = rand.Next(1, Width);
@@ -53,15 +55,21 @@ namespace MazeGenerator
             var rand = new Random();
 
             var thisCell = Cells[x][y];
+
+            if (!thisCell.IsWall)
+            {
+                return;
+            }
+
             thisCell.IsWall = false;
 
             // Find next directions
             (int x,int y)[] nextCells = new[]
             {
-                (x - 1, y),
-                (x + 1, y),
-                (x, y - 1),
-                (x, y + 1),
+                (x - 2, y),
+                (x + 2, y),
+                (x, y - 2),
+                (x, y + 2),
             }.OrderBy(_ => rand.Next()).ToArray();
 
             foreach (var next in nextCells)
@@ -83,6 +91,11 @@ namespace MazeGenerator
                     continue;
                 }
 
+                if (next.x < x) Cells[x - 1][y].IsWall = false;
+                if (next.x > x) Cells[x + 1][y].IsWall = false;
+                if (next.y < y) Cells[x][y - 1].IsWall = false;
+                if (next.y > y) Cells[x][y + 1].IsWall = false;
+
                 // Process the next cell
                 CarveFromCell(next.x, next.y);
             }
@@ -93,13 +106,27 @@ namespace MazeGenerator
             if (x < 1 || x >= Width - 1) throw new ArgumentOutOfRangeException(nameof(x), "Must be within the maze.");
             if (y < 1 || y >= Height - 1) throw new ArgumentOutOfRangeException(nameof(y), "Must be within the maze.");
 
-            return new List<Cell>()
+            var neighbours = new List<Cell>();
+
+            if (x - 2 > 0)
             {
-                Cells[x - 1][y],
-                Cells[x + 1][y],
-                Cells[x][y - 1],
-                Cells[x][y + 1],
-            };
+                neighbours.Add(Cells[x - 2][y]);
+            }
+            if (y - 2 > 0)
+            {
+                neighbours.Add(Cells[x][y - 2]);
+            }
+
+            if (x + 2 < Width)
+            {
+                neighbours.Add(Cells[x + 2][y]);
+            }
+            if (y + 2 > Height)
+            {
+                neighbours.Add(Cells[x][y + 2]);
+            }
+
+            return neighbours;
         }
 
         public void Print()
