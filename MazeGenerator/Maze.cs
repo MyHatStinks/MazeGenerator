@@ -41,13 +41,25 @@ namespace MazeGenerator
                 rand.Next(0, (Width - 1) / 2) * 2 + 1,
                 rand.Next(0, (Height - 1) / 2) * 2 + 1);
 
-            //// Start position somewhere along the top
+            // Start position somewhere along the top
             var start = rand.Next(1, Width);
-            Cells[0][start].IsWall = false;
+            var row = 0;
+            Cells[row][start].IsWall = false;
 
-            //// End position somewhere along the bottom
+            if (Cells[row + 1][start].IsWall)
+            {
+                Cells[row + 1][start].IsWall = false;
+            }
+
+            // End position somewhere along the bottom
             var end = rand.Next(1, Width);
-            Cells[Cells.Count - 1][end].IsWall = false;
+            row = Cells.Count - 1;
+            Cells[row][end].IsWall = false;
+
+            if (Cells[row - 1][end].IsWall)
+            {
+                Cells[row - 1][end].IsWall = false;
+            }
         }
 
         private void CarveFromCell(int x, int y)
