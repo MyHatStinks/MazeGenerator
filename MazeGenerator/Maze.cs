@@ -129,14 +129,10 @@ namespace MazeGenerator
 
         public void Print()
         {
-            Console.WriteLine("Printing Maze");
-
             Cells.ForEach(row => {
                 row.ForEach(cell => Console.Write(cell.ConsoleString()));
                 Console.WriteLine();
             });
-
-            Console.WriteLine("Complete!");
         }
     }
 }
