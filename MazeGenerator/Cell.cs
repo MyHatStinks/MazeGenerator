@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MazeGenerator
 {
@@ -7,6 +8,7 @@ namespace MazeGenerator
         public Cell()
         {
             IsWall = true;
+            PathsTo = new HashSet<Cell>();
         }
 
         public bool IsWall { get; set; }
@@ -16,5 +18,7 @@ namespace MazeGenerator
         /// </summary>
         /// <returns>String representation of this cell.</returns>
         public string ConsoleString() => IsWall ? "#" : " ";
+
+        public HashSet<Cell> PathsTo { get; set; }
     }
 }

@@ -85,48 +85,34 @@ namespace MazeGenerator
                     continue;
                 }
 
+                var nextCell = GetCell(next.x, next.y);
+
                 // Ensure we're not making a loop
-                if (GetNeighbours(next.x, next.y).Any(c => c != thisCell && !c.IsWall))
+                if (nextCell.PathsTo.Any(c => c != thisCell))
                 {
                     continue;
                 }
 
+                // Setting up paths
                 if (next.x < x) Cells[x - 1][y].IsWall = false;
                 if (next.x > x) Cells[x + 1][y].IsWall = false;
                 if (next.y < y) Cells[x][y - 1].IsWall = false;
                 if (next.y > y) Cells[x][y + 1].IsWall = false;
+
+                thisCell.PathsTo.Add(nextCell);
+                nextCell.PathsTo.Add(thisCell);
 
                 // Process the next cell
                 CarveFromCell(next.x, next.y);
             }
         }
 
-        private List<Cell> GetNeighbours(int x, int y)
+        public Cell GetCell (int x, int y)
         {
             if (x < 1 || x >= Width - 1) throw new ArgumentOutOfRangeException(nameof(x), "Must be within the maze.");
             if (y < 1 || y >= Height - 1) throw new ArgumentOutOfRangeException(nameof(y), "Must be within the maze.");
 
-            var neighbours = new List<Cell>();
-
-            if (x - 2 > 0)
-            {
-                neighbours.Add(Cells[x - 2][y]);
-            }
-            if (y - 2 > 0)
-            {
-                neighbours.Add(Cells[x][y - 2]);
-            }
-
-            if (x + 2 < Width)
-            {
-                neighbours.Add(Cells[x + 2][y]);
-            }
-            if (y + 2 > Height)
-            {
-                neighbours.Add(Cells[x][y + 2]);
-            }
-
-            return neighbours;
+            return Cells[x][y];
         }
 
         public void Print()
